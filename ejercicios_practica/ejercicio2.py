@@ -6,10 +6,8 @@
 
 # IMPORTANTE: NO borrar los comentarios
 # que aparecen en verde con el hashtag "#"
-
 import json
 import requests
-
 import matplotlib.pyplot as plt
 
 
@@ -45,5 +43,43 @@ if __name__ == '__main__':
     # para imprimir cuantos títulos completó cada usuario
     # y verifique si los primeros usuarios (mirando la página a ojo)
     # los datos recolectados son correctos.
-
+    #Extraer datos de la URL 
+    resultado = requests.get(url)
+    registros = resultado.json()
+   
+    usuarios=[] 
+    titulos_completados=[]  
+    completados=0
+    idusuario=1
+    
+    #Seleccion de datos
+    for x in registros:
+        if(int(x['userId']) == idusuario): 
+            completed = bool(x['completed'])  
+            if(completed):
+                completados+=1 
+        else:
+            usuarios.append(idusuario) 
+            titulos_completados.append(completados) 
+            idusuario= int(x['userId'])
+            completados=0
+            completed = bool(x['completed']) 
+            if(completed):
+                completados+=1 
+         
+    usuarios.append(idusuario) 
+    titulos_completados.append(completados) 
+           
+    #Grafico
+    fig = plt.figure()
+    fig.suptitle('Libros completados por usuario', fontsize=14)
+    ax = fig.add_subplot()
+    ax.bar(usuarios, titulos_completados, label='Tutulos completados')
+    ax.set_facecolor('navajowhite')
+    ax.set_xlabel("ID Usuario")
+    ax.set_ylabel("Completados")
+    ax.legend()
+    plt.xticks(usuarios)
+    plt.show()
+    
     print("terminamos")
